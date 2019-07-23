@@ -6,7 +6,7 @@ const routes = require('./routes');
 
 app.use(bodyParser.json());
 app.use('/', routes);
-
-app.listen(process.env, () => {
+console.log(`PORT: ${process.env.PORT}`)
+app.listen(process.env.PORT, () => {
     console.log(`SERVER STARTED ON PORT ${process.env.PORT}`)
 });

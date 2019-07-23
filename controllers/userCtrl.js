@@ -92,6 +92,7 @@ exports.getUsers = async (req, res, next) => {
         ON users.group_id = user_groups.id
         LEFT JOIN (SELECT user_id,  COUNT(user_id) AS count_followers FROM followers) AS followers
         ON users.id = followers.user_id
+        GROUP BY users.id
     `;
     connection.query(query, (error, results, fields) => {
         if (error) {

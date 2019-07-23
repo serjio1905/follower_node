@@ -86,13 +86,50 @@ exports.unfollow = async (req, res, next) => {
 
 exports.getUsers = async (req, res, next) => {
     const query = `
-        SELECT users.id, users.name, users.group_id, user_groups.name AS group_name, IFNULL(followers.count_followers, 0) AS count_followers
+        SELECT users.id,
+            users.name,
+            users.group_id,
+            user_groups.name AS group_name
         FROM users
         INNER JOIN user_groups
         ON users.group_id = user_groups.id
-        LEFT JOIN (SELECT user_id,  COUNT(user_id) AS count_followers FROM followers) AS followers
-        ON users.id = followers.user_id
-        GROUP BY users.id
+    `;
+    const queryFollowers = `
+        SELECT user_id, COUNT(follower_id) AS follower_count
+        FROM followers
+        GROUP BY user_id
+    `;
+    connection.query(query, (error, results, fields) => {
+        const resUsers = [];
+        if (error) {
+            res.status(400).send("DataBaseError");
+        } else {
+            connection.query(queryFollowers, (errorF, resultsF, fieldsF) => {
+                results.forEach(user => {
+                    const userRes = {...user, follower_count: 0};
+                    resultsF.forEach(follower => {
+                        if(userRes.id === follower.user_id) {
+                            userRes.follower_count = follower.follower_count;
+                        }
+                    });
+                    console.log(userRes);
+                    resUsers.push(userRes);
+                });
+                res.status(200).send(resUsers);
+            });
+        }
+    })
+}
+
+exports.getGroups = async (req, res, next) => {
+    const query = `
+        SELECT user_groups.id,
+            user_groups.name,
+            COUNT (users.id) AS follows
+        FROM user_groups
+        LEFT JOIN users
+        ON user_groups.id = users.group_id
+        GROUP BY user_groups.id
     `;
     connection.query(query, (error, results, fields) => {
         if (error) {

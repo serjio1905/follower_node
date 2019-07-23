@@ -6,12 +6,14 @@ router.post('/user', userCtrl.addUser);
 
 router.post('/group', userCtrl.addGroup);
 
-router.put('/follow', userCtrl.follow);
+router.post('/follow', userCtrl.follow);
 
-router.put('/unfollow', userCtrl.unfollow);
+router.post('/unfollow', userCtrl.unfollow);
 
 router.get('/users', userCtrl.getUsers);
 
 router.get('/user/:id', userCtrl.getUser);
+
+router.get('/groups', userCtrl.getGroups);
 
 module.exports = router;

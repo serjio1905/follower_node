@@ -6,9 +6,9 @@ router.post('/user', userCtrl.addUser);
 
 router.post('/group', userCtrl.addGroup);
 
-router.post('/follow', userCtrl.follow);
+router.post('/followOn/:user_id/:follower_id', userCtrl.follow);
 
-router.post('/unfollow', userCtrl.unfollow);
+router.post('/follow/off/:user_id/:follower_id', userCtrl.unfollow);
 
 router.get('/users', userCtrl.getUsers);
 

@@ -42,13 +42,20 @@ exports.addGroup = async (req, res, next) => {
 }
 
 exports.follow = async (req, res, next) => {
+    console.log("FOLLOW");
+    // const checkQuery = `
+    //     SELECT COUNT(*)
+    //     FROM followers
+    //     WHERE user_id = '${req.body.user_id}' AND follower_id = '${req.body.follower_id}'
+    // `;
     const checkQuery = `
         SELECT COUNT(*)
         FROM followers
-        WHERE user_id = '${req.body.user_id}' AND follower_id = '${req.body.follower_id}'
+        WHERE user_id = '${req.params.user_id}' AND follower_id = '${req.params.follower_id}'
     `;
     connection.query(checkQuery, (error, results, fields) => {
         if (error) {
+            console.log(error);
             res.status(400).send("DataBaseError");
         } else {
             if (results[0]['COUNT(*)'] > 0) {
@@ -56,10 +63,11 @@ exports.follow = async (req, res, next) => {
             } else {
                 const query = `
                     INSERT INTO followers (user_id, follower_id)
-                    VALUES ('${req.body.user_id}', '${req.body.follower_id}') 
+                    VALUES ('${req.params.user_id}', '${req.params.follower_id}') 
                 `;
                 connection.query(query, (error, results, fields) => {
                     if (error) {
+                        console.log(error);
                         res.status(400).send("DataBaseError");
                     } else {
                         res.status(200).send("OK");
@@ -73,7 +81,7 @@ exports.follow = async (req, res, next) => {
 exports.unfollow = async (req, res, next) => {
     const query = `
         DELETE FROM followers
-        WHERE user_id = '${req.body.user_id}' AND follower_id = '${req.body.follower_id}'
+        WHERE user_id = '${req.params.user_id}' AND follower_id = '${req.params.follower_id}'
     `;
     connection.query(query, (error, results, fields) => {
         if (error) {
